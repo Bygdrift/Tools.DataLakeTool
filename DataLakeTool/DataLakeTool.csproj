@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<!--Notice to Bygdrift developer: Create nuget package: dotnet pack-->
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Version>0.9.0</Version>
+		<Authors>kenboc</Authors>
+		<Company>Bygdrift</Company>
+		<Description>A simple tool to work with Azure DataLake and DataLake Queues.</Description>
+		<Copyright>https://github.com/Bygdrift/CsvTools/blob/master/License.txt</Copyright>
+		<PackageProjectUrl>https://github.com/Bygdrift/CsvTools</PackageProjectUrl>
+		<PackageIcon>icon.png</PackageIcon>
+		<RepositoryUrl>https://github.com/Bygdrift/CsvTools.git</RepositoryUrl>
+		<PackageTags>CSV</PackageTags>
+		<RepositoryType>git</RepositoryType>
+		<NeutralLanguage>en</NeutralLanguage>
+		<PackageId>Bygdrift.DataLakeTools</PackageId>
+		<Product>Bygdrift.DataLakeTools</Product>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<PackageReleaseNotes>
+			Extracted the project to it's own from Warehouse, as I earlier have done with Bygdrift.CsvTools.
+		</PackageReleaseNotes>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<None Include="icon.png" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Azure.Storage.Files.DataLake" Version="12.10.0" />
+		<PackageReference Include="Azure.Storage.Queues" Version="12.10.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Submodules\Bygdrift.Tools.CsvTool\CsvTool\CsvTool.csproj" />
+	  <ProjectReference Include="..\Submodules\Bygdrift.Tools.LogTool\LogTool\LogTool.csproj" />
+	</ItemGroup>
+	
+</Project>
