@@ -34,15 +34,20 @@
 	</ItemGroup>
 
 	<!--When DataLakeTool is used as main package-->
-	<ItemGroup Condition="!Exists('..\..\..\Submodules')">
+	<!--<ItemGroup Condition="!Exists('..\..\..\Submodules')">
 		<ProjectReference Include="..\Submodules\Bygdrift.Tools.CsvTool\CsvTool\CsvTool.csproj" />
 		<ProjectReference Include="..\Submodules\Bygdrift.Tools.LogTool\LogTool\LogTool.csproj" />
-	</ItemGroup>
+	</ItemGroup>-->
 
 	<!--When DataLakeTool is used as SubModule from a sub folder-->
-	<ItemGroup Condition="Exists('..\..\..\Submodules')">
+	<!--<ItemGroup Condition="Exists('..\..\..\Submodules')">
 		<ProjectReference Include="..\..\Bygdrift.Tools.CsvTool\CsvTool\CsvTool.csproj" />
 		<ProjectReference Include="..\..\Bygdrift.Tools.LogTool\LogTool\LogTool.csproj" />
+	</ItemGroup>-->
+
+	<ItemGroup>
+		<ProjectReference Include="$(SolutionDir)Submodules\Bygdrift.Tools.CsvTool\CsvTool\CsvTool.csproj" />
+		<ProjectReference Include="$(SolutionDir)Submodules\Bygdrift.Tools.LogTool\LogTool\LogTool.csproj" />
 	</ItemGroup>
 
 </Project>
