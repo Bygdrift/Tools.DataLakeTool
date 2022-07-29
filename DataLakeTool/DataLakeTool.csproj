@@ -22,7 +22,7 @@
 		</PackageReleaseNotes>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 	</PropertyGroup>
-	
+
 	<ItemGroup>
 		<None Include="icon.png" Pack="true" PackagePath="\" />
 	</ItemGroup>
@@ -33,9 +33,16 @@
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\Submodules\Bygdrift.Tools.CsvTool\CsvTool\CsvTool.csproj" />
-	  <ProjectReference Include="..\Submodules\Bygdrift.Tools.LogTool\LogTool\LogTool.csproj" />
+	<!--When DataLakeTool is used as main package-->
+	<ItemGroup Condition="Exists('..\Submodules')">
+		<ProjectReference Include="..\Submodules\Bygdrift.Tools.CsvTool\CsvTool\CsvTool.csproj" />
+		<ProjectReference Include="..\Submodules\Bygdrift.Tools.LogTool\LogTool\LogTool.csproj" />
 	</ItemGroup>
-	
+
+	<!--When DataLakeTool is accesed as SubModule from a sub folder-->
+	<ItemGroup Condition="!Exists('..\Submodules')">
+		<ProjectReference Include="..\..\Bygdrift.Tools.CsvTool\CsvTool\CsvTool.csproj" />
+		<ProjectReference Include="..\..\Bygdrift.Tools.LogTool\LogTool\LogTool.csproj" />
+	</ItemGroup>
+
 </Project>
