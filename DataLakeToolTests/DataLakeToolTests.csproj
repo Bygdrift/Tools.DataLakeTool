@@ -27,19 +27,19 @@
   </ItemGroup>
 	
 	<!--For testing-->
-	<ItemGroup>
-		<!--LogtTool-->
+	<!--<ItemGroup>
+		--><!--LogtTool--><!--
 		<Reference Include="Bygdrift.Tools.LogTool">
 			<HintPath>..\..\LogTool\LogTool\bin\Debug\net6.0\Bygdrift.Tools.LogTool.dll</HintPath>
 		</Reference>
-		<!--CsvTool-->
+		--><!--CsvTool--><!--
 		<Reference Include="Bygdrift.Tools.CsvTool">
 			<HintPath>..\..\CsvTool\CsvTool\bin\Debug\net6.0\Bygdrift.Tools.CsvTool.dll</HintPath>
 		</Reference>
 		<PackageReference Include="ClosedXML" Version="0.95.4" />
 		<PackageReference Include="ExcelDataReader" Version="3.6.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-	</ItemGroup>
+	</ItemGroup>-->
 
 
 </Project>
