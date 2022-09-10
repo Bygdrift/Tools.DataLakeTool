@@ -83,38 +83,6 @@ namespace Bygdrift.Tools.DataLakeTool
             return true;
         }
 
-        private static List<Csv> GetFolderCsvs(DataLakeFileSystemClient fileSystem, PathItem pathItem, DateTime from, DateTime to, DateTime date, bool onlyTakeFirstFileInEachFolder)
-        {
-            var csvs = new List<Csv>();
-            var paths = fileSystem.GetPaths(pathItem.Name);
-
-            var items = paths.Where(o => o.IsDirectory == false && Path.GetExtension(o.Name).Equals(".csv", StringComparison.InvariantCultureIgnoreCase));
-
-            if (!items.Any())
-                return null;
-
-            if (items.Count() > 1 && onlyTakeFirstFileInEachFolder)
-            {
-                var filePath = items.OrderBy(o => o.LastModified).Last().Name;
-                AddCsvFromPath(csvs, fileSystem, filePath);
-            }
-            else
-                foreach (var item in items)
-                    AddCsvFromPath(csvs, fileSystem, item.Name);
-
-            return csvs;
-        }
-
-        private static void AddCsvFromPath(List<Csv> csvs, DataLakeFileSystemClient fileSystem, string filePath)
-        {
-            var fileClient = fileSystem.GetFileClient(filePath);
-            if (fileClient != null)
-            {
-                using var stream = fileClient.OpenRead();
-                csvs.Add(new Csv().FromCsvStream(stream));
-            }
-        }
-
         /// <summary>
         /// Get multiple files that are stored as Csvs in a given timeslot
         /// </summary>
@@ -406,6 +374,38 @@ namespace Bygdrift.Tools.DataLakeTool
             var list = fileSystem.GetPaths(directory.Path).OrderByDescending(o => o.LastModified);
 
             return string.IsNullOrEmpty(filename) ? list.FirstOrDefault() : list.Where(o => o.Name.EndsWith(filename, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+        }
+
+        private static List<Csv> GetFolderCsvs(DataLakeFileSystemClient fileSystem, PathItem pathItem, DateTime from, DateTime to, DateTime date, bool onlyTakeFirstFileInEachFolder)
+        {
+            var csvs = new List<Csv>();
+            var paths = fileSystem.GetPaths(pathItem.Name);
+
+            var items = paths.Where(o => o.IsDirectory == false && Path.GetExtension(o.Name).Equals(".csv", StringComparison.InvariantCultureIgnoreCase));
+
+            if (!items.Any())
+                return null;
+
+            if (items.Count() > 1 && onlyTakeFirstFileInEachFolder)
+            {
+                var filePath = items.OrderBy(o => o.LastModified).Last().Name;
+                AddCsvFromPath(csvs, fileSystem, filePath);
+            }
+            else
+                foreach (var item in items)
+                    AddCsvFromPath(csvs, fileSystem, item.Name);
+
+            return csvs;
+        }
+
+        private static void AddCsvFromPath(List<Csv> csvs, DataLakeFileSystemClient fileSystem, string filePath)
+        {
+            var fileClient = fileSystem.GetFileClient(filePath);
+            if (fileClient != null)
+            {
+                using var stream = fileClient.OpenRead();
+                csvs.Add(new Csv().FromCsvStream(stream));
+            }
         }
     }
 }

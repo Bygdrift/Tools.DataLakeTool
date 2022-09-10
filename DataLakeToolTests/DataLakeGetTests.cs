@@ -2,7 +2,6 @@ using Bygdrift.Tools.CsvTool;
 using Bygdrift.Tools.DataLakeTool;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace DataLakeToolTests

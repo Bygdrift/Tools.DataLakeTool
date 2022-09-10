@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
-		<Version>1.0.0-alpha</Version>
+		<Version>1.0.1</Version>
 		<Authors>kenboc</Authors>
 		<Company>Bygdrift</Company>
 		<Description>A simple tool to work with Azure DataLake and DataLake Queues.</Description>
@@ -28,11 +28,26 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Bygdrift.Tools.CsvTool" Version="1.0.4" />
-		<PackageReference Include="Bygdrift.Tools.LogTool" Version="0.9.1" />
+		<!--<PackageReference Include="Bygdrift.Tools.CsvTool" Version="1.0.4" />-->
+		<!--<PackageReference Include="Bygdrift.Tools.LogTool" Version="0.9.1" />-->
 		<PackageReference Include="Azure.Storage.Files.DataLake" Version="12.10.0" />
 		<PackageReference Include="Azure.Storage.Queues" Version="12.10.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+	</ItemGroup>
+
+	<!--For testing-->
+	<ItemGroup>
+		<!--LogtTool-->
+		<Reference Include="Bygdrift.Tools.LogTool">
+			<HintPath>..\..\LogTool\LogTool\bin\Debug\net6.0\Bygdrift.Tools.LogTool.dll</HintPath>
+		</Reference>
+		<!--CsvTool-->
+		<Reference Include="Bygdrift.Tools.CsvTool">
+			<HintPath>..\..\CsvTool\CsvTool\bin\Debug\net6.0\Bygdrift.Tools.CsvTool.dll</HintPath>
+		</Reference>
+		<PackageReference Include="ClosedXML" Version="0.95.4" />
+		<PackageReference Include="ExcelDataReader" Version="3.6.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
 	</ItemGroup>
 
 </Project>
