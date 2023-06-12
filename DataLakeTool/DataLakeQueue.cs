@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Bygdrift.Tools.DataLakeTool
 {
     /// <summary>
-    /// A datalake working with messages
+    /// A datalake working with messages.
     /// </summary>
     public class DataLakeQueue
     {
@@ -26,6 +26,7 @@ namespace Bygdrift.Tools.DataLakeTool
         public DataLakeQueue(string connectionString, string containerName, Log log)
         {
             Log = log;
+            ConnectionString = connectionString;
             Container = containerName.ToLower();  //Rules for the containername (Is checked when loading app.ModuleName): https://www.thecodebuzz.com/azure-requestfailedexception-specified-resource-name-contains-invalid-characters/
             if (!Container.All(o => char.IsLetterOrDigit(o)))
                 throw new Exception("The containerName must only contain letters and numbers.");
@@ -153,7 +154,7 @@ namespace Bygdrift.Tools.DataLakeTool
         }
 
         /// <summary>
-        /// Delete the message
+        /// Delete the queue
         /// </summary>
         public async Task DeleteQueueAsync()
         {
@@ -171,12 +172,17 @@ namespace Bygdrift.Tools.DataLakeTool
         /// <summary>
         /// Get multiple messages
         /// </summary>
-        public async Task<IEnumerable<QueueMessage>> GetMessagesAsync(int? amount = null)
+        /// <param name="amount"></param>
+        /// <param name="visibilityTimeout">How long time the messages will be invisible. The time starts for all messages at the same time. Default is 30 seconds. Time should be long enough for the loop to fetch all messages before the become visible again. So if you should get i million messages ands sets of one second, the process will get the same message multiple times</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<QueueMessage>> GetMessagesAsync(int? amount = null, TimeSpan? visibilityTimeout = null)
         {
             var tasks = new List<Task<Azure.Response<QueueMessage[]>>>();
+            if (amount <= 0)
+                amount = null;
 
             if (amount <= 32)
-                return (await QueueClient.ReceiveMessagesAsync(amount)).Value;
+                return (await QueueClient.ReceiveMessagesAsync(amount, visibilityTimeout)).Value;
 
             var messageCounts = (await QueueClient.GetPropertiesAsync()).Value.ApproximateMessagesCount;
             if (messageCounts == 0)
@@ -193,51 +199,59 @@ namespace Bygdrift.Tools.DataLakeTool
                 if (i == calls && i * take != amount)
                     take = (int)amount % take;
 
-                tasks.Add(QueueClient.ReceiveMessagesAsync(take));
+                tasks.Add(QueueClient.ReceiveMessagesAsync(take, visibilityTimeout));
             }
 
             await Task.WhenAll(tasks);
             return tasks.SelectMany(o => o.Result.Value);
         }
 
-        /// <summary>
-        /// Peek a message so it doesn't turn invisible for 30 seconds
-        /// </summary>
-        public async Task<PeekedMessage> PeekMessageAsync()
-        {
-            return await QueueClient.PeekMessageAsync();
-        }
+        ///// <summary>
+        ///// Peek a message so it doesn't turn invisible for 30 seconds
+        ///// </summary>
+        //public async Task<PeekedMessage> PeekMessageAsync()
+        //{
+        //    return await QueueClient.PeekMessageAsync();
+        //}
 
         /// <summary>
-        /// Peek multiple messages so it doesn't turn invisible for 30 seconds. Twice as fast as Getmessages but can't be deleted
+        /// Peek multiple messages so it doesn't turn invisible for 30 seconds. Twice as fast as Getmessages but can't be deleted. You can only get up to 32 queues.
         /// </summary>
         public async Task<IEnumerable<PeekedMessage>> PeekMessagesAsync(int? amount = null)
         {
             var tasks = new List<Task<Azure.Response<PeekedMessage[]>>>();
+            if (amount <= 0)
+                amount = null;
 
             if (amount <= 32)
                 return (await QueueClient.PeekMessagesAsync(amount)).Value;
+            else
+                return (await QueueClient.PeekMessagesAsync(32)).Value;
 
-            var messageCounts = (await QueueClient.GetPropertiesAsync()).Value.ApproximateMessagesCount;
-            if (messageCounts == 0)
-                return default;
+            ///The following is not possible. Quesus are first in, first out.
+            //var messageCounts = (await QueueClient.GetPropertiesAsync()).Value.ApproximateMessagesCount;
+            //if (messageCounts == 0)
+            //    return default;
 
-            if (amount == null || messageCounts < amount)
-                amount = messageCounts;
+            //if (amount == null || messageCounts < amount)
+            //    amount = messageCounts;
 
-            var take = 32;  //32 is maximum for message to retrieve per call
-            var calls = Math.Ceiling((double)amount / take);
+            //var take = 32;  //32 is maximum for message to retrieve per call
+            //var calls = Math.Ceiling((double)amount / take);
 
-            for (int i = 1; i <= calls; i++)
-            {
-                if (i == calls && i * take != amount)
-                    take = (int)amount % take;
+            //for (int i = 1; i <= calls; i++)
+            //{
+            //    if (i == calls && i * take != amount)
+            //        take = (int)amount % take;
 
-                tasks.Add(QueueClient.PeekMessagesAsync(take));
-            }
+            //    QueueClient.ReceiveMessagesAsync(maxMessages: take, calls: 1)
 
-            await Task.WhenAll(tasks);
-            return tasks.SelectMany(o => o.Result.Value);
+
+            //    tasks.Add(QueueClient.PeekMessagesAsync(maxMessages:take, calls: 1));
+            //}
+
+            //await Task.WhenAll(tasks);
+            //return tasks.SelectMany(o => o.Result.Value);
         }
 
         /// <summary>
